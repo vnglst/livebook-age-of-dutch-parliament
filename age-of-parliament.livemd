@@ -1,4 +1,4 @@
-# Average age of Dutch parliament
+# Plotting the age of parliament with Livebook
 
 ```elixir
 Mix.install([
@@ -78,7 +78,7 @@ members =
 # |> Enum.filter(fn m -> String.contains?(m["memberLabel"], "Mark Rutte") end)
 ```
 
-## Format data
+## Formatting the data
 
 To make sure that the data is in a form that we can easily plot, we're going apply the following transformations to the original data. We will:
 
@@ -110,7 +110,7 @@ members =
   )
 ```
 
-## Create a list of active years for every member
+## Creating a list of active years for every member
 
 To get an idea of the how the average age of members of parliament have changed over time we'd have to plot the years on the x axis. On the y axis we'd like to see the average age of the members.
 
@@ -137,7 +137,7 @@ members_per_year =
   |> List.flatten()
 ```
 
-## Add ages per year
+## Adding ages per year
 
 We now have a nice list of year, member pairs. The only thing that is still missing, is the age of every member at that time. Let's replace the member maps with the age.
 
