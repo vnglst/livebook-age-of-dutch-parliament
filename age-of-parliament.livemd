@@ -14,19 +14,19 @@ alias VegaLite, as: Vl
 
 I've been meaning to give Livebook, an interactive coding notebook for the Elixir programing language, a try and on Twitter I recently came across the perfect opportunity. A [tweet](https://twitter.com/WaltHickey/status/1569827673760845826) by the data journalist [Walter Hickey](https://twitter.com/WaltHickey) alarmingly noted that the percentage of congress members that is over 70 is increasing exponentially. This caught my interest and I wanted to see if the same is also true for my home country the Netherlands.
 
-In this tutorial I'll go over the steps needed to retrieve, prepare and visualise the data in an Elixir Livebook. At the end of this tutorial you should be able to visualize the average age of politicians of other countries as well.
+In this tutorial I'll go over the steps needed to retrieve, prepare and visualise the data in an Elixir Livebook. At the end you should be able to visualize the average age of politicians of other countries as well.
 
 I'll be using the following libraries.
 
-- [`vega_lite`](https://github.com/elixir-nx/vega_lite) which allows us to define our visualisations in Elixir.
-- [`kino_vega_lite`](https://github.com/livebook-dev/kino_vega_lite), which instructs Livebook how to render.
-- [`jason`](https://hexdocs.pm/jason/readme.html) library for parsing JSON.
+* [`vega_lite`](https://github.com/elixir-nx/vega_lite) which allows us to define our visualisations in Elixir.
+* [`kino_vega_lite`](https://github.com/livebook-dev/kino_vega_lite), which instructs Livebook how to render.
+* [`jason`](https://hexdocs.pm/jason/readme.html) library for parsing JSON.
 
 Let's install them by running the setup cell above.
 
 ## Getting the data from Wikidata
 
-To retrieve the data I used the Wikidata's query engine that is provided free of charge. Wikidata uses the SPARQL query language, which is a powerful language in and by itself. It's somewhat similar to SQL, but it did take me some time to [familiarize myself with the syntax](https://www.wikidata.org/wiki/Wikidata:SPARQL_tutorial).
+To retrieve the data I used Wikidata's query engine that is provided free of charge. Wikidata uses the SPARQL query language, which is a powerful language in and by itself. It's somewhat similar to SQL, but it did take me some time to [familiarize myself with the syntax](https://www.wikidata.org/wiki/Wikidata:SPARQL_tutorial).
 
 I came up with the following [query](https://query.wikidata.org/#SELECT%20%3Fmember%20%3Fdob%20%3Fstart%20%3Fend%20%3FmemberLabel%0AWHERE%20%7B%0A%20%20%3Fmember%20wdt%3AP39%20wd%3AQ18887908%3B%0A%20%20%20%20%20%20%20%20%20%20wdt%3AP569%20%3Fdob.%0A%0A%20%20%3Fmember%20p%3AP39%20%3Fposition.%0A%20%20%3Fposition%20ps%3AP39%20wd%3AQ18887908%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20pq%3AP580%20%3Fstart.%0A%20%20%0A%20%20OPTIONAL%20%7B%20%3Fmember%20p%3AP39%20%3Fposition.%0A%20%20%3Fposition%20ps%3AP39%20wd%3AQ18887908%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20pq%3AP582%20%3Fend.%20%7D%0A%20%20%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%22.%20%7D%0A%7D%20ORDER%20BY%20DESC%28%3Fstart%29%0A) to retrieve all the members of the Dutch house of representatives:
 
@@ -82,9 +82,9 @@ members =
 
 To make sure that the data is in a form that we can easily plot, we're going apply the following transformations to the original data. We will:
 
-- remove the `member` property which contains a link to the Wikidata entry
-- parse the date strings
-- use 2022 as a fallback in case the end date is not defined
+* remove the `member` property which contains a link to the Wikidata entry
+* parse the date strings
+* use 2022 as a fallback in case the end date is not defined
 
 ```elixir
 parse_date = fn date_str ->
@@ -176,7 +176,11 @@ Vl.new(width: 800, height: 400, title: "Average age of Dutch parliament", view: 
 |> Vl.encode_field(:y, "age", aggregate: :mean, scale: [domain: [0, 70]])
 ```
 
-Looking at the plot it seems like the Dutch parliament is getting younger! Pfew, no gerontocracy in my country!
+Looking at the plot it seems like the Dutch parliament is getting younger instead of older. Pfew, no gerontocracy in my country!
+
+## Conclusion
+
+In this post I've shown how you can use Livebook to explore data. We started with loading the data from a JSON file, transforming it and then visualise it using the VegaLite plotting library. I hope you enjoyed this post and that it gave you some inspiration to try out Livebook yourself.
 
 ## Bonus: even nicer visualizations
 
